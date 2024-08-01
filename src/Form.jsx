@@ -1,10 +1,16 @@
 import { useState } from 'react';
 
-const Form = ({ addNewItem }) => {
+import { useCreateTask } from './reactQueryHooks';
+
+const Form = () => {
   const [newItemName, setNewItemName] = useState('');
+  const { mutate: createTask, isLoading } = useCreateTask();
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    createTask(newItemName, {
+      onSuccess: () => setNewItemName('')
+    });
   };
   return (
     <form onSubmit={handleSubmit}>
@@ -16,7 +22,12 @@ const Form = ({ addNewItem }) => {
           value={newItemName}
           onChange={(event) => setNewItemName(event.target.value)}
         />
-        <button type="submit" className="btn" onSubmit={(e) => handleSubmit}>
+        <button
+          type="submit"
+          className="btn"
+          disabled={isLoading}
+          onSubmit={(e) => handleSubmit}
+        >
           add task
         </button>
       </div>
